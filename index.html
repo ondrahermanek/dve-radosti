@@ -67,7 +67,7 @@
   <!-- ====== EDIT ABOVE THIS LINE ====== -->
 
   <hr>
-  <footer>Návštěv: <span id="visits">…</span></footer>
+  <footer style="display:none">Návštěv: <span id="visits"></span></footer>
 
 </main>
 
@@ -81,7 +81,9 @@
   }
 
   function show(n) {
-    document.getElementById("visits").textContent = n !== undefined ? n : "–";
+    if (n === undefined) return;
+    document.getElementById("visits").textContent = n;
+    document.querySelector("footer").style.display = "";
   }
 
   function readCount() {
