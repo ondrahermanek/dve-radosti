@@ -1,1 +1,110 @@
 
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dvě radosti</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #37352f;
+    --muted: #787774;
+    --line: #e9e9e7;
+    --quote: #f7f6f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191919;
+      --text: #e6e6e4;
+      --muted: #9b9a97;
+      --line: #373737;
+      --quote: #252525;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 24px 60px;
+  }
+  .icon { font-size: 72px; line-height: 1; margin-bottom: 16px; }
+  h1 { font-size: 40px; line-height: 1.2; margin: 0 0 24px; font-weight: 700; }
+  h2 { font-size: 26px; margin: 36px 0 8px; font-weight: 600; }
+  p { margin: 8px 0; }
+  blockquote {
+    margin: 16px 0;
+    padding: 4px 16px;
+    border-left: 3px solid var(--text);
+  }
+  img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 16px 0; }
+  figure { margin: 16px 0; }
+  figcaption { color: var(--muted); font-size: 14px; }
+  hr { border: none; border-top: 1px solid var(--line); margin: 40px 0 16px; }
+  footer { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- ====== EDIT BELOW THIS LINE ====== -->
+
+  <div class="icon">🌿</div>
+  <h1>Dvě radosti</h1>
+
+  <p>Tady se můžeš vyřádit</p>
+  
+  <!-- ====== EDIT ABOVE THIS LINE ====== -->
+
+  <hr>
+  <footer>Návštěv: <span id="visits">…</span></footer>
+
+</main>
+
+<script>
+  var BASE = "https://api.counterapi.dev/v2/dve-radosti/coun-dve-radosti-notion";
+
+  function readNumber(d) {
+    if (d && d.value !== undefined) return d.value;
+    if (d && d.data && d.data.up_count !== undefined) return d.data.up_count;
+    return undefined;
+  }
+
+  function show(n) {
+    document.getElementById("visits").textContent = n !== undefined ? n : "–";
+  }
+
+  function readCount() {
+    return fetch(BASE)
+      .then(function (r) { return r.json(); })
+      .then(function (d) { show(readNumber(d)); })
+      .catch(function () { show(undefined); });
+  }
+
+  // Count once per browser tab session, so refreshes don't inflate the number.
+  var alreadyCounted = false;
+  try { alreadyCounted = sessionStorage.getItem("counted") === "1"; } catch (e) {}
+
+  if (alreadyCounted) {
+    readCount();
+  } else {
+    fetch(BASE + "/up")
+      .then(function () {
+        try { sessionStorage.setItem("counted", "1"); } catch (e) {}
+      })
+      .catch(function () {})
+      .then(readCount);
+  }
+</script>
+</body>
+</html>
